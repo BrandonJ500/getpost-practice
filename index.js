@@ -29,9 +29,23 @@ const comments = [
     }
 ]
 
+app.get("/comments/new", (req,res)=>{
+    res.render("comments/new")
+})
+
+app.get("/comments", (req,res)=> {
+    res.render("comments/index",{comments})
+})
 app.post("/tacos", (req,res)=>{
     console.log(req.body)
     res.send("post /tacos responds")
+})
+
+app.post("/comments", (req,res)=> {
+   console.log(req.body)
+   const {username, comment} = req.body;
+   comments.push({username, comment})
+    res.send("It worked")
 })
 app.listen(3000, ()=> {
     console.log("port 3000")
