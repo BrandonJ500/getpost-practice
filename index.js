@@ -2,9 +2,9 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const {v4: uuid} = require("uuid")
+const methodOverride = require("method-override");
 
-
-
+app.use(methodOverride("_method"));
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.set("views", path.join(__dirname, "views"))
@@ -13,7 +13,7 @@ app.get("/tacos", (req, res) => {
     res.send("get /tacos responds");
 })
 
-const comments = [
+let comments = [
     {
         id: uuid(),
         username: "todd",
@@ -54,23 +54,31 @@ app.post("/comments", (req, res) => {
     comments.push({ username, comment, id:uuid() })
     res.redirect("/comments")
 })
+
 app.get("/comments/:id/edit", (req,res)=>{
     const {id}= req.params;
     const comment = comments.find((c=> c.id === id));
     res.render("comments/edit", {comment})
 })
+
+
 app.get("/comments/:id", (req,res)=>{
     const {id}= req.params;
    const comment = comments.find((c=> c.id === id));
    res.render("comments/show",{comment});
  })
 
+app.delete("/comments/:id", (req,res)=>{
+    const {id}= req.params;
+   comments = comments.filter(c => c.id !== id);
+    res.redirect("/comments")
+})
+
 app.patch("/comments/:id", (req,res)=>{
     const {id}= req.params;
     const newCommentText = req.body.comment;
-    res.send("allgood!")
     const foundComment = comments.find((c=> c.id === id));
-    fountComment.comment = newCommentText;
+    foundComment.comment = newCommentText;
     res.redirect("/comments")
 })
 
